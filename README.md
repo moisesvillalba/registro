@@ -1,166 +1,132 @@
-# Sistema de Registro Integral
+# 📋 Sistema de Registro Integral
 
-![Banner del Sistema de Registro](https://via.placeholder.com/800x200/1e3a8a/FFFFFF?text=Sistema+de+Registro)
+![Banner del Sistema](https://via.placeholder.com/800x200/1e3a8a/FFFFFF?text=Sistema+de+Registro)
 
-## 📋 Descripción
+## 🌟 Introducción
 
-Sistema de Registro es una aplicación web completa que permite registrar y administrar información de miembros, incluyendo datos personales, laborales, logiales y médicos. Diseñado con una interfaz amigable y fácil de usar tanto para los usuarios que registran información como para administradores.
+### ¿Qué es este Sistema?
 
-✨ **Características principales:**
-- Formulario multipaso intuitivo
-- Panel administrativo para gestión de registros
-- Subida y visualización de documentos
-- Compatible con dispositivos móviles
-- Fácil de instalar y personalizar
+El Sistema de Registro Integral es una aplicación web diseñada para simplificar y optimizar el proceso de registro y gestión de miembros. Imagina tener una herramienta que:
 
-## 🚀 Instalación rápida
+- 🖊️ Recopila información de manera estructurada
+- 📊 Organiza datos de forma inteligente
+- 🔒 Mantiene tu información segura
 
-### Requisitos previos
-- Servidor web con PHP 7.4 o superior
-- MySQL 5.7 o MariaDB 10.3 o superior
-- Acceso a un panel de control de hosting o FTP
+### Casos de Uso
 
-### Pasos para instalar
+✅ **Para Organizaciones**:
+- Registros de miembros
+- Gestión de información institucional
+- Control de datos personales y profesionales
 
-1. **Descarga del código**
-   ```
-   git clone https://github.com/moisesvillalba/registro.git
-   ```
-   O descarga el [archivo ZIP](https://github.com/moisesvillalba/registro/archive/refs/heads/main.zip) y descomprímelo.
+✅ **Para Administradores**:
+- Panel de control centralizado
+- Búsqueda y filtrado de registros
+- Gestión eficiente de información
 
-2. **Sube los archivos a tu servidor**
-   - Transfiere todos los archivos y carpetas a la carpeta pública de tu servidor web (generalmente `public_html`, `www` o `htdocs`).
+## 🚀 Características Principales
 
-3. **Crea una base de datos**
-   - Accede a tu panel de control y crea una nueva base de datos MySQL.
-   - Crea un usuario con todos los permisos para esta base de datos.
-   - Anota el nombre de la base de datos, el usuario y la contraseña.
+| Característica | Descripción | Beneficio |
+|---------------|-------------|-----------|
+| 📝 Formulario Multipaso | Registro dividido en 4 secciones | Experiencia de usuario intuitiva |
+| 🖥️ Panel Administrativo | Gestión completa de registros | Control total de la información |
+| 📤 Subida de Documentos | Almacenamiento de archivos | Respaldo de documentación |
+| 📱 Diseño Responsivo | Funciona en todos los dispositivos | Accesibilidad universal |
 
-4. **Ejecuta el instalador**
-   - Abre tu navegador y accede a: `http://tu-dominio.com/install.php`
-   - Completa el formulario con los datos de la base de datos.
-   - Haz clic en "Instalar Sistema".
+## 🛠️ Instalación Paso a Paso
 
-5. **¡Listo para usar!**
-   - Accede al formulario de registro: `http://tu-dominio.com/index.php`
-   - Accede al panel administrativo: `http://tu-dominio.com/login.php`
-     - Usuario: `admin`
-     - Contraseña: `Admin123`
+### Requisitos Previos
 
-> **⚠️ Importante:** Por seguridad, cambia la contraseña del administrador inmediatamente después de la instalación.
+**Necesitarás**:
+- 🌐 Servidor web (Apache/Nginx)
+- 🐘 PHP 7.4+
+- 🗃️ MySQL 5.7+ o MariaDB 10.3+
+- 🌍 Navegador web moderno
 
-## 📖 Guía de uso
+### Guía de Instalación
 
-### Registrar un nuevo miembro
+#### 1. Descargar el Código 📦
 
-El formulario está dividido en 4 secciones para facilitar el registro:
+```bash
+# Clonar repositorio
+git clone https://github.com/moisesvillalba/registro.git
 
-1. **Datos Personales**: Información básica del miembro (nombre, CI, contacto, etc.)
-2. **Datos Laborales**: Información sobre su trabajo
-3. **Datos Logiales**: Información institucional
-4. **Datos Médicos**: Información médica relevante
+# Entrar al directorio
+cd registro
+```
 
-Para completar el registro:
-- Rellena los campos en cada sección
-- Navega entre secciones con los botones "Siguiente" y "Anterior"
-- Completa todos los campos obligatorios (marcados con *)
-- Haz clic en "Enviar Formulario" al finalizar
+#### 2. Configuración de Base de Datos 🗄️
 
-### Administrar registros
+```sql
+-- Crear base de datos
+CREATE DATABASE sistema_registro;
 
-1. **Acceder al panel de administración**
-   - Ingresa a: `http://tu-dominio.com/login.php`
-   - Inicia sesión con tus credenciales
+-- Crear usuario (sustituir valores)
+CREATE USER 'usuario_registro'@'localhost' IDENTIFIED BY 'contraseña_segura';
+GRANT ALL PRIVILEGES ON sistema_registro.* TO 'usuario_registro'@'localhost';
+```
 
-2. **Ver listado de miembros**
-   - Verás una tabla con todos los registros
-   - Usa la búsqueda para filtrar resultados
-   - Navega entre páginas con los botones de paginación
+#### 3. Configurar Conexión 🔗
 
-3. **Acciones disponibles**
-   - **Ver**: Muestra todos los detalles del registro
-   - **Editar**: Permite modificar la información
-   - **Eliminar**: Borra el registro (acción irreversible)
+Editar `config/database.php`:
+```php
+private $host = 'localhost';
+private $db_name = 'sistema_registro';
+private $username = 'usuario_registro';
+private $password = 'contraseña_segura';
+```
 
-## 🛠️ Personalización
+#### 4. Ejecutar Instalador 🚀
 
-### Cambiar colores y estilos
+- Abrir `http://tu-dominio.com/install.php`
+- Seguir instrucciones del instalador
 
-El sistema usa variables CSS para facilitar la personalización:
+## 🔐 Acceso Inicial
 
-1. Abre el archivo `assets/css/styles.css`
-2. Busca la sección `:root` al inicio del archivo
-3. Modifica los valores de las variables para cambiar los colores principales:
-   ```css
-   :root {
-     --primary-color: #1e3a8a;  /* Color principal */
-     --primary-light: #3b82f6;  /* Color principal claro */
-     /* más variables... */
-   }
-   ```
+| Tipo | Credenciales |
+|------|--------------|
+| 👤 Usuario | `admin` |
+| 🔑 Contraseña | `Admin123` |
 
-### Ajustar permisos de carpetas
+> ⚠️ **Importante**: Cambiar contraseña inmediatamente
 
-Si encuentras problemas para subir archivos:
+## 🎨 Personalización
 
-1. Asegúrate de que las siguientes carpetas tengan permisos de escritura (755 o 775):
-   - `/uploads`
-   - `/uploads/documentos`
+### Modificar Estilos
 
-## 📱 Compatibilidad
+En `assets/css/styles.css`:
 
-El Sistema de Registro es completamente responsive y funciona en:
-- Computadoras de escritorio
-- Laptops
-- Tablets
-- Teléfonos móviles
+```css
+:root {
+  --primary-color: #1e3a8a;     /* Color principal */
+  --primary-light: #3b82f6;     /* Tono claro */
+  --success-color: #10b981;     /* Color de éxito */
+}
+```
 
-Navegadores soportados:
-- Chrome (recomendado)
-- Firefox
-- Edge
-- Safari
+## 🚧 Solución de Problemas
 
-## ❓ Solución de problemas comunes
+### Errores Comunes 🛠️
 
-### Error de conexión a la base de datos
-- Verifica que los datos de conexión sean correctos
-- Confirma que el usuario tenga permisos suficientes
-- Asegúrate de que el servicio MySQL/MariaDB esté activo
+1. **Error de Conexión de Base de Datos**
+   - ✅ Verificar credenciales
+   - ✅ Comprobar servicio MySQL
+   - ✅ Revisar permisos de usuario
 
-### No se pueden subir archivos
-- Verifica los permisos de la carpeta `uploads`
-- Comprueba que los archivos no excedan el límite de tamaño (5MB)
-- Asegúrate de usar formatos permitidos: JPG, PNG o PDF
+2. **Problemas de Subida de Archivos**
+   - ✅ Verificar permisos de carpeta `/uploads`
+   - ✅ Límite de tamaño: 5MB
+   - ✅ Formatos permitidos: JPG, PNG, PDF
 
-### Problemas con el formulario
-- Asegúrate de completar todos los campos obligatorios
-- Verifica que no haya errores de formato (ej. fechas futuras)
-- Comprueba tu conexión a internet
+## 🔒 Características de Seguridad
 
-## 🔄 Actualizaciones y mantenimiento
+- 🛡️ Protección contra inyección SQL
+- 🔍 Validación de entradas
+- 🧼 Sanitización de datos
+- 🚫 Protección contra CSRF
 
-Para mantener el sistema seguro y funcional:
 
-1. **Copia de seguridad regular**
-   - Descarga una copia de todos los archivos
-   - Exporta la base de datos desde tu panel de control
+## 📞 Contacto y Soporte
 
-2. **Verificación de integridad**
-   - Comprueba periódicamente que el sistema funcione correctamente
-   - Revisa los registros para asegurarte de que se guarden adecuadamente
-
-## 📞 Soporte
-
-¿Necesitas ayuda con la instalación o uso del sistema?
-
-- GitHub: (https://github.com/moisesvillalba/registro/issues)
-- Email: [moisesvillalba@gmail.com]
-
-## 🔒 Seguridad
-
-El sistema incluye:
-- Protección contra inyección SQL
-- Validación de entradas
-- Sanitización de datos
-- Protección básica contra CSRF
+- 📧 Email: moisesvillalba@gmail.com
+- 🐙 GitHub: [Abrir Issues](https://github.com/moisesvillalba/registro/issues)

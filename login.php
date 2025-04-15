@@ -1,9 +1,11 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 // Iniciar sesión con configuraciones seguras
 session_start([
-    'cookie_httponly' => true,     // Previene acceso a cookies via JavaScript
-    'cookie_secure' => true,       // Solo envía cookies sobre HTTPS (comentar en desarrollo local)
-    'cookie_samesite' => 'Lax'     // Protección contra CSRF
+    'cookie_httponly' => true,     
+    'cookie_secure' => false,       // Change this to false for local development
+    'cookie_samesite' => 'Lax'     
 ]);
 
 // Incluir el sistema de mensajes flash
