@@ -1,0 +1,50 @@
+# Configuración del Sistema de Registro
+# Reglas para mejorar seguridad y rendimiento
+
+# Activar el motor de reescritura
+RewriteEngine On
+
+# Proteger archivo .htaccess
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+# Proteger directorios sensibles
+<FilesMatch "^(config|uploads)/.*">
+  Order Deny,Allow
+  Deny from all
+  Allow from 127.0.0.1
+  Allow from ::1
+</FilesMatch>
+
+# Permitir subida de archivos más grandes (10MB)
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+
+# Configuración de caché para mejorar rendimiento
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+  ExpiresByType text/html "access plus 1 day"
+</IfModule>
+
+# Comprimir archivos para reducir tiempo de carga
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json
+</IfModule>
+
+# Forzar HTTPS (descomenta para activar)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Establecer la página de error para 404
+ErrorDocument 404 /404.php
+
+# Redireccionar a la raíz en caso de acceso directo a directorios
+Options -Indexes
