@@ -5,6 +5,9 @@ session_start();
 // Incluir archivo de configuración de la base de datos
 require_once 'config/database.php';
 
+// Incluir el sistema de mensajes flash
+require_once 'includes/flash.php';
+
 // Función para limpiar datos de entrada
 function limpiarDato($dato) {
     $dato = trim($dato);
@@ -56,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $numero_emergencia = limpiarDato($_POST["numero_emergencia"]);
     $contacto_emergencia = limpiarDato($_POST["contacto_emergencia"]);
     
-    // Manejo de la subida de documentos (ahora con soporte para múltiples archivos)
+    // Manejo de la subida de documentos (mejorado con validación de tipos y tamaños)
     $ruta_documentos = "";
     
     if (isset($_FILES["certificados"]) && is_array($_FILES["certificados"]["name"])) {
@@ -72,13 +75,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Procesar cada archivo
         for ($i = 0; $i < count($_FILES["certificados"]["name"]); $i++) {
             if ($_FILES["certificados"]["error"][$i] == 0) {
-                // Generar un nombre de archivo único
-                $nombre_archivo = uniqid() . "_" . basename($_FILES["certificados"]["name"][$i]);
-                $ruta_archivo = $directorio_destino . $nombre_archivo;
+                // Obtener extensión del archivo
+                $extension = strtolower(pathinfo($_FILES["certificados"]["name"][$i], PATHINFO_EXTENSION));
+                // Lista de extensiones permitidas
+                $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'pdf'];
                 
-                // Mover el archivo cargado al directorio de destino
-                if (move_uploaded_file($_FILES["certificados"]["tmp_name"][$i], $ruta_archivo)) {
-                    $rutas_archivos[] = $ruta_archivo;
+                // Verificar extensión
+                if (in_array($extension, $extensiones_permitidas)) {
+                    // Verificar tamaño (máximo 5MB)
+                    if ($_FILES["certificados"]["size"][$i] <= 5 * 1024 * 1024) {
+                        // Generar nombre único con timestamp para evitar colisiones
+                        $nombre_archivo = uniqid('doc_') . '_' . time() . '.' . $extension;
+                        $ruta_archivo = $directorio_destino . $nombre_archivo;
+                        
+                        // Mover el archivo
+                        if (move_uploaded_file($_FILES["certificados"]["tmp_name"][$i], $ruta_archivo)) {
+                            $rutas_archivos[] = $ruta_archivo;
+                        }
+                    } else {
+                        $mensaje_error = "El archivo " . $_FILES["certificados"]["name"][$i] . " excede el tamaño máximo permitido (5MB).";
+                        throw new Exception($mensaje_error);
+                    }
+                } else {
+                    $mensaje_error = "El tipo de archivo " . $_FILES["certificados"]["name"][$i] . " no está permitido. Use JPG, PNG o PDF.";
+                    throw new Exception($mensaje_error);
                 }
             }
         }
@@ -100,6 +120,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mensaje_error = "Ya existe un registro con este número de CI. Por favor, verifique los datos.";
             throw new Exception($mensaje_error);
         }
+        
+        // Comenzar transacción para asegurar integridad de datos
+        $db->beginTransaction();
         
         // Preparar la consulta SQL para insertar datos
         $sql = "INSERT INTO miembros (
@@ -151,17 +174,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Ejecutar la consulta
         if ($stmt->execute()) {
+            // Confirmar transacción
+            $db->commit();
+            
+            // Guardar mensaje de éxito en la sesión
+            setFlashMessage('success', 'Registro creado exitosamente');
+            
             // Registro exitoso, redirigir a la página de éxito
             header("Location: success.php");
             exit();
         } else {
+            // Revertir transacción en caso de error
+            $db->rollBack();
+            
             $mensaje_error = "Error al registrar los datos.";
             throw new Exception($mensaje_error);
         }
     } catch (Exception $e) {
+        // Si ocurrió un error durante la transacción, revertir cambios
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
+        
+        // Eliminar archivos subidos en caso de error en la base de datos
+        if (!empty($rutas_archivos)) {
+            foreach ($rutas_archivos as $ruta) {
+                if (file_exists($ruta)) {
+                    unlink($ruta);
+                }
+            }
+        }
+        
         $mensaje_error = $e->getMessage();
+        
+        // Guardar mensaje de error en la sesión
+        setFlashMessage('error', $mensaje_error);
     }
 }
+
+// Si llegamos aquí, es porque hubo un error o se accedió directamente a esta página
 ?>
 
 <!DOCTYPE html>
@@ -169,8 +220,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Error en el registro de miembro">
     <title>Error en el Registro</title>
+    
+    <!-- Precargar recursos críticos -->
+    <link rel="preload" href="assets/css/styles.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Cargar CSS -->
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/validation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -179,18 +239,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         
         <div class="form-container">
-            <?php if (isset($mensaje_error)): ?>
-                <div class="error-message" style="text-align: center; margin-bottom: 20px; font-size: 18px;">
-                    <?php echo $mensaje_error; ?>
+            <?php 
+            // Mostrar mensaje de error específico si existe
+            if (isset($mensaje_error)): 
+            ?>
+                <div class="mensaje-container error" role="alert" aria-live="assertive">
+                    <div class="mensaje-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="mensaje-content">
+                        <h2>Ha ocurrido un error</h2>
+                        <p><?php echo $mensaje_error; ?></p>
+                    </div>
+                </div>
+            <?php 
+            // Si no hay mensaje específico, mostrar mensaje de error genérico
+            else: 
+            ?>
+                <div class="mensaje-container error" role="alert">
+                    <div class="mensaje-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="mensaje-content">
+                        <h2>Acceso incorrecto</h2>
+                        <p>Esta página solo debe ser accedida al enviar el formulario de registro.</p>
+                    </div>
                 </div>
             <?php endif; ?>
             
-            <p style="text-align: center; margin-bottom: 30px;">Ha ocurrido un error al procesar el formulario. Por favor, inténtelo nuevamente.</p>
-            
             <div class="btn-container">
-                <a href="index.php" class="btn">Volver al Formulario</a>
+                <a href="index.php" class="btn">
+                    <i class="fas fa-arrow-left"></i> Volver al Formulario
+                </a>
             </div>
         </div>
     </div>
+    
+    <!-- Script para funcionalidad offline -->
+    <script>
+    // Registrar Service Worker para funcionalidad offline
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('Service Worker registrado');
+          })
+          .catch(error => {
+            console.log('Error al registrar Service Worker:', error);
+          });
+      });
+    }
+    </script>
 </body>
 </html>
