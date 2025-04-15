@@ -7,7 +7,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema de registro integral para miembros. Complete sus datos personales, laborales,logiales y médicos.">
+    <meta name="description" content="Sistema de registro integral para miembros. Complete sus datos personales, laborales, logiales y médicos.">
     <meta name="theme-color" content="#1e3a8a">
     <title>Formulario de Registro | Sistema Integral</title>
     
@@ -245,85 +245,84 @@ session_start();
                     </div>
                 </section>
                 
-                <!-- PASO 3: DATOS INSTITUCIONALES -->
                 <!-- PASO 3: DATOS LOGIALES -->
-<section class="form-step" data-step="3" aria-labelledby="paso3-titulo">
-    <div class="section">
-        <h2 class="section-title" id="paso3-titulo">
-            <i class="fas fa-monument"></i> DATOS LOGIALES
-        </h2>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="logia_actual">Logia Actual:<span class="required">*</span></label>
-                <input type="text" id="logia_actual" name="logia_actual" class="form-control" required
-                       placeholder="Nombre de la Logia">
-            </div>
-            
-            <div class="form-group">
-                <label for="grado_masonico">Grado Masónico:<span class="required">*</span></label>
-                <select id="grado_masonico" name="grado_masonico" class="form-control" required>
-                    <option value="">Seleccione Grado</option>
-                    <option value="aprendiz">Aprendiz</option>
-                    <option value="companero">Compañero</option>
-                    <option value="maestro">Maestro</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="grado_capitular">Grado Capitular:</label>
-                <select id="grado_capitular" name="grado_capitular" class="form-control">
-                    <option value="">Seleccione Grado</option>
-                    <option value="primer_grado">Primer Grado</option>
-                    <option value="segundo_grado">Segundo Grado</option>
-                    <option value="tercer_grado">Tercer Grado</option>
-                    <option value="no_aplica">No Aplica</option>
-                </select>
-                <small class="form-help">Opcional</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="fecha_iniciacion">Fecha de Iniciación:<span class="required">*</span></label>
-                <input type="date" id="fecha_iniciacion" name="fecha_iniciacion" class="form-control" required
-                       max="<?php echo date('Y-m-d'); ?>">
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="logia_iniciacion">Logia de Iniciación:<span class="required">*</span></label>
-                <input type="text" id="logia_iniciacion" name="logia_iniciacion" class="form-control" required
-                       placeholder="Nombre de la Logia de Iniciación">
-            </div>
-            
-            <div class="form-group">
-                <label for="certificados">Foto de Certificados:</label>
-                <div class="file-upload-container">
-                    <input type="file" id="certificados" name="certificados[]" multiple 
-                           class="form-control file-input" 
-                           accept="image/jpeg,image/png,application/pdf">
-                    <label for="certificados" class="file-label">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <span>Seleccionar archivos</span>
-                    </label>
-                    <div class="file-preview"></div>
-                </div>
-                <small class="form-help">Formatos permitidos: PDF, JPG, PNG. Máximo 5MB. (Opcional)</small>
-            </div>
-        </div>
-        
-        <div class="step-navigation">
-            <button type="button" class="btn btn-outline prev-step" data-prev="2">
-                <i class="fas fa-arrow-left"></i> Anterior
-            </button>
-            <button type="button" class="btn btn-primary next-step" data-next="4">
-                Siguiente <i class="fas fa-arrow-right"></i>
-            </button>
-        </div>
-    </div>
-</section>
+                <section class="form-step" data-step="3" aria-labelledby="paso3-titulo">
+                    <div class="section">
+                        <h2 class="section-title" id="paso3-titulo">
+                            <i class="fas fa-monument"></i> DATOS LOGIALES
+                        </h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="logia_actual">Logia Actual:<span class="required">*</span></label>
+                                <input type="text" id="logia_actual" name="logia_actual" class="form-control" required
+                                       placeholder="Nombre de la Logia">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="grado_masonico">Grado Masónico:<span class="required">*</span></label>
+                                <select id="grado_masonico" name="grado_masonico" class="form-control" required>
+                                    <option value="">Seleccione Grado</option>
+                                    <option value="aprendiz">Aprendiz</option>
+                                    <option value="companero">Compañero</option>
+                                    <option value="maestro">Maestro</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="grado_capitular">Grado Capitular:</label>
+                                <select id="grado_capitular" name="grado_capitular" class="form-control">
+                                    <option value="">Seleccione Grado</option>
+                                    <option value="primer_grado">Primer Grado</option>
+                                    <option value="segundo_grado">Segundo Grado</option>
+                                    <option value="tercer_grado">Tercer Grado</option>
+                                    <option value="no_aplica">No Aplica</option>
+                                </select>
+                                <small class="form-help">Opcional</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="fecha_iniciacion">Fecha de Iniciación:<span class="required">*</span></label>
+                                <input type="date" id="fecha_iniciacion" name="fecha_iniciacion" class="form-control" required
+                                       max="<?php echo date('Y-m-d'); ?>">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="logia_iniciacion">Logia de Iniciación:<span class="required">*</span></label>
+                                <input type="text" id="logia_iniciacion" name="logia_iniciacion" class="form-control" required
+                                       placeholder="Nombre de la Logia de Iniciación">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="certificados">Foto de Certificados:</label>
+                                <div class="file-upload-container">
+                                    <input type="file" id="certificados" name="certificados[]" multiple 
+                                           class="form-control file-input" 
+                                           accept="image/jpeg,image/png,application/pdf">
+                                    <label for="certificados" class="file-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Seleccionar archivos</span>
+                                    </label>
+                                    <div class="file-preview"></div>
+                                </div>
+                                <small class="form-help">Formatos permitidos: PDF, JPG, PNG. Máximo 5MB. (Opcional)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="step-navigation">
+                            <button type="button" class="btn btn-outline prev-step" data-prev="2">
+                                <i class="fas fa-arrow-left"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-primary next-step" data-next="4">
+                                Siguiente <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
                 
                 <!-- PASO 4: DATOS MÉDICOS -->
                 <section class="form-step" data-step="4" aria-labelledby="paso4-titulo">
@@ -440,15 +439,15 @@ session_start();
     </main>
     
     <footer class="footer">
-    <div class="footer-content flex justify-center items-center space-x-4">
-        <p>&copy; <?php echo date('Y'); ?> Sistema de Registro. Todos los derechos reservados.</p>
-        <nav class="footer-links flex space-x-4">
-            <a href="#">Términos y Condiciones</a>
-            <a href="#">Política de Privacidad</a>
-            <a href="#">Contacto</a>
-        </nav>
-    </div>
-</footer>
+        <div class="footer-content flex justify-center items-center space-x-4">
+            <p>&copy; <?php echo date('Y'); ?> Sistema de Registro. Todos los derechos reservados.</p>
+            <nav class="footer-links flex space-x-4">
+                <a href="#">Términos y Condiciones</a>
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Contacto</a>
+            </nav>
+        </div>
+    </footer>
     
     <!-- Scripts - Carga diferida para mejor rendimiento -->
     <script src="assets/js/script.js" defer></script>

@@ -26,13 +26,13 @@ CREATE TABLE IF NOT EXISTS miembros (
     direccion_laboral VARCHAR(255) NOT NULL,
     empresa VARCHAR(100),
     
-    -- Datos institucionales
+    -- Datos logiales
     institucion_actual VARCHAR(100) NOT NULL,
     nivel_actual VARCHAR(50) NOT NULL,
     nivel_superior VARCHAR(50),
     fecha_ingreso DATE NOT NULL,
     institucion_ingreso VARCHAR(100) NOT NULL,
-    documentos VARCHAR(255),
+    documentos TEXT, -- Cambio de VARCHAR a TEXT para permitir múltiples rutas
     
     -- Datos médicos
     grupo_sanguineo VARCHAR(5) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS miembros (
     
     -- Índices
     UNIQUE INDEX (ci)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Crear tabla para usuarios administradores
 CREATE TABLE IF NOT EXISTS usuarios (
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     activo BOOLEAN DEFAULT TRUE,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ultima_conexion TIMESTAMP NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Insertar usuario administrador por defecto (contraseña: Admin123)
 INSERT INTO usuarios (nombre_usuario, password_hash, nombre_completo, email, rol) 

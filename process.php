@@ -40,12 +40,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $direccion_laboral = limpiarDato($_POST["direccion_laboral"]);
     $empresa = isset($_POST["empresa"]) ? limpiarDato($_POST["empresa"]) : "";
     
-    // DATOS LOGIALES
-    $institucion_actual = limpiarDato($_POST["institucion_actual"]);
-    $nivel_actual = limpiarDato($_POST["nivel_actual"]);
-    $nivel_superior = isset($_POST["nivel_superior"]) ? limpiarDato($_POST["nivel_superior"]) : "";
-    $fecha_ingreso = limpiarDato($_POST["fecha_ingreso"]);
-    $institucion_ingreso = limpiarDato($_POST["institucion_ingreso"]);
+    // DATOS LOGIALES - Ajustados para coincidir con los campos del formulario
+    $institucion_actual = limpiarDato($_POST["logia_actual"]);
+    $nivel_actual = limpiarDato($_POST["grado_masonico"]);
+    $nivel_superior = isset($_POST["grado_capitular"]) ? limpiarDato($_POST["grado_capitular"]) : "";
+    $fecha_ingreso = limpiarDato($_POST["fecha_iniciacion"]);
+    $institucion_ingreso = limpiarDato($_POST["logia_iniciacion"]);
     
     // DATOS MÉDICOS
     $grupo_sanguineo = limpiarDato($_POST["grupo_sanguineo"]);
@@ -56,9 +56,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $numero_emergencia = limpiarDato($_POST["numero_emergencia"]);
     $contacto_emergencia = limpiarDato($_POST["contacto_emergencia"]);
     
-    // Manejo de la subida de documentos
+    // Manejo de la subida de documentos (ahora con soporte para múltiples archivos)
     $ruta_documentos = "";
-    if (isset($_FILES["documentos"]) && $_FILES["documentos"]["error"] == 0) {
+    
+    if (isset($_FILES["certificados"]) && is_array($_FILES["certificados"]["name"])) {
         $directorio_destino = "uploads/documentos/";
         
         // Crear el directorio si no existe
@@ -66,20 +67,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mkdir($directorio_destino, 0777, true);
         }
         
-        // Generar un nombre de archivo único
-        $nombre_archivo = uniqid() . "_" . basename($_FILES["documentos"]["name"]);
-        $ruta_documentos = $directorio_destino . $nombre_archivo;
+        $rutas_archivos = [];
         
-        // Mover el archivo cargado al directorio de destino
-        if (move_uploaded_file($_FILES["documentos"]["tmp_name"], $ruta_documentos)) {
-            // Archivo subido con éxito
-        } else {
-            $mensaje_error = "Error al subir el archivo.";
-            goto error_handling;
+        // Procesar cada archivo
+        for ($i = 0; $i < count($_FILES["certificados"]["name"]); $i++) {
+            if ($_FILES["certificados"]["error"][$i] == 0) {
+                // Generar un nombre de archivo único
+                $nombre_archivo = uniqid() . "_" . basename($_FILES["certificados"]["name"][$i]);
+                $ruta_archivo = $directorio_destino . $nombre_archivo;
+                
+                // Mover el archivo cargado al directorio de destino
+                if (move_uploaded_file($_FILES["certificados"]["tmp_name"][$i], $ruta_archivo)) {
+                    $rutas_archivos[] = $ruta_archivo;
+                }
+            }
+        }
+        
+        // Convertir el array de rutas a string (separado por comas)
+        if (!empty($rutas_archivos)) {
+            $ruta_documentos = implode(",", $rutas_archivos);
         }
     }
     
     try {
+        // Verificar si el CI ya existe para evitar duplicados
+        $check_sql = "SELECT id FROM miembros WHERE ci = :ci";
+        $check_stmt = $db->prepare($check_sql);
+        $check_stmt->bindParam(':ci', $ci);
+        $check_stmt->execute();
+        
+        if ($check_stmt->rowCount() > 0) {
+            $mensaje_error = "Ya existe un registro con este número de CI. Por favor, verifique los datos.";
+            throw new Exception($mensaje_error);
+        }
+        
         // Preparar la consulta SQL para insertar datos
         $sql = "INSERT INTO miembros (
                     ci, nombre, apellido, fecha_nacimiento, lugar, profesion, direccion, 
@@ -135,15 +156,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         } else {
             $mensaje_error = "Error al registrar los datos.";
-            goto error_handling;
+            throw new Exception($mensaje_error);
         }
-    } catch (PDOException $e) {
-        $mensaje_error = "Error en la base de datos: " . $e->getMessage();
-        goto error_handling;
+    } catch (Exception $e) {
+        $mensaje_error = $e->getMessage();
     }
-    
-    error_handling:
-    // Si llegamos aquí, hubo un error
 }
 ?>
 

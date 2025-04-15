@@ -37,6 +37,27 @@ if ($stmt->rowCount() == 0) {
 
 // Obtener los datos del miembro
 $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Función helper para mostrar campos logiales correctamente
+function mostrarCampoLogial($valor, $campoOriginal) {
+    if ($campoOriginal == 'nivel_actual') {
+        switch ($valor) {
+            case 'aprendiz': return 'Aprendiz';
+            case 'companero': return 'Compañero';
+            case 'maestro': return 'Maestro';
+            default: return htmlspecialchars($valor);
+        }
+    } elseif ($campoOriginal == 'nivel_superior') {
+        switch ($valor) {
+            case 'primer_grado': return 'Primer Grado';
+            case 'segundo_grado': return 'Segundo Grado';
+            case 'tercer_grado': return 'Tercer Grado';
+            case 'no_aplica': return 'No Aplica';
+            default: return htmlspecialchars($valor ?: 'No especificado');
+        }
+    }
+    return htmlspecialchars($valor);
+}
 ?>
 
 <!DOCTYPE html>
@@ -46,6 +67,7 @@ $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ver Registro</title>
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .detail-section {
             margin-bottom: 30px;
@@ -73,7 +95,7 @@ $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
         
         .detail-label {
             font-weight: 600;
-            color: var(--secondary-color);
+            color: var(--primary-light);
             display: block;
             margin-bottom: 3px;
         }
@@ -84,13 +106,39 @@ $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
         
         .document-preview {
             margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .document-preview img {
-            max-width: 100%;
-            max-height: 300px;
+            max-width: 150px;
+            max-height: 150px;
             border: 1px solid var(--border-color);
             border-radius: 5px;
+            object-fit: cover;
+        }
+        
+        .document-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .document-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .document-name {
+            font-size: 0.8rem;
+            text-align: center;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -98,11 +146,14 @@ $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
     <div class="container">
         <div class="header">
             <h1>Detalles del Registro</h1>
+            <p>Información completa del miembro</p>
         </div>
         
         <div class="form-container">
             <div class="section">
-                <h2 class="section-title">DATOS PERSONALES</h2>
+                <h2 class="section-title">
+                    <i class="fas fa-user"></i> DATOS PERSONALES
+                </h2>
                 
                 <div class="detail-row">
                     <div class="detail-item">
@@ -185,7 +236,9 @@ $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
             
             <div class="section">
-                <h2 class="section-title">DATOS LABORALES</h2>
+                <h2 class="section-title">
+                    <i class="fas fa-briefcase"></i> DATOS LABORALES
+                </h2>
                 
                 <div class="detail-row">
                     <div class="detail-item">
@@ -201,53 +254,74 @@ $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
             
             <div class="section">
-                <h2 class="section-title">DATOS INSTITUCIONALES</h2>
+                <h2 class="section-title">
+                    <i class="fas fa-monument"></i> DATOS LOGIALES
+                </h2>
                 
                 <div class="detail-row">
                     <div class="detail-item">
-                        <span class="detail-label">Institución Actual:</span>
+                        <span class="detail-label">Logia Actual:</span>
                         <span class="detail-value"><?php echo htmlspecialchars($miembro['institucion_actual']); ?></span>
                     </div>
                     
                     <div class="detail-item">
-                        <span class="detail-label">Nivel Actual:</span>
-                        <span class="detail-value"><?php echo htmlspecialchars($miembro['nivel_actual']); ?></span>
+                        <span class="detail-label">Grado Masónico:</span>
+                        <span class="detail-value"><?php echo mostrarCampoLogial($miembro['nivel_actual'], 'nivel_actual'); ?></span>
                     </div>
                 </div>
                 
                 <div class="detail-row">
                     <div class="detail-item">
-                        <span class="detail-label">Nivel Superior:</span>
-                        <span class="detail-value"><?php echo htmlspecialchars($miembro['nivel_superior'] ?: 'No especificado'); ?></span>
+                        <span class="detail-label">Grado Capitular:</span>
+                        <span class="detail-value"><?php echo mostrarCampoLogial($miembro['nivel_superior'], 'nivel_superior'); ?></span>
                     </div>
                     
                     <div class="detail-item">
-                        <span class="detail-label">Fecha de Ingreso:</span>
+                        <span class="detail-label">Fecha de Iniciación:</span>
                         <span class="detail-value"><?php echo date('d/m/Y', strtotime($miembro['fecha_ingreso'])); ?></span>
                     </div>
                 </div>
                 
                 <div class="detail-row">
                     <div class="detail-item">
-                        <span class="detail-label">Institución de Ingreso:</span>
+                        <span class="detail-label">Logia de Iniciación:</span>
                         <span class="detail-value"><?php echo htmlspecialchars($miembro['institucion_ingreso']); ?></span>
                     </div>
                 </div>
                 
                 <?php if (!empty($miembro['documentos'])): ?>
                 <div class="detail-row">
-                    <div class="detail-item">
-                        <span class="detail-label">Documentos:</span>
+                    <div class="detail-item" style="flex: 1 0 100%;">
+                        <span class="detail-label">Certificados:</span>
                         <div class="detail-value">
-                            <a href="<?php echo htmlspecialchars($miembro['documentos']); ?>" target="_blank">Ver documento</a>
-                            <?php
-                            $ext = pathinfo($miembro['documentos'], PATHINFO_EXTENSION);
-                            if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif'])):
-                            ?>
                             <div class="document-preview">
-                                <img src="<?php echo htmlspecialchars($miembro['documentos']); ?>" alt="Documento">
+                                <?php
+                                $documentos = explode(",", $miembro['documentos']);
+                                foreach ($documentos as $documento):
+                                    $ext = strtolower(pathinfo($documento, PATHINFO_EXTENSION));
+                                    $nombre = basename($documento);
+                                    
+                                    if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])):
+                                ?>
+                                <div class="document-item">
+                                    <img src="<?php echo htmlspecialchars($documento); ?>" alt="Documento">
+                                    <div class="document-name"><?php echo htmlspecialchars($nombre); ?></div>
+                                </div>
+                                <?php elseif ($ext == 'pdf'): ?>
+                                <div class="document-item">
+                                    <i class="fas fa-file-pdf document-icon"></i>
+                                    <div class="document-name"><?php echo htmlspecialchars($nombre); ?></div>
+                                    <a href="<?php echo htmlspecialchars($documento); ?>" target="_blank" class="btn btn-sm">Ver PDF</a>
+                                </div>
+                                <?php else: ?>
+                                <div class="document-item">
+                                    <i class="fas fa-file document-icon"></i>
+                                    <div class="document-name"><?php echo htmlspecialchars($nombre); ?></div>
+                                    <a href="<?php echo htmlspecialchars($documento); ?>" target="_blank" class="btn btn-sm">Descargar</a>
+                                </div>
+                                <?php endif; ?>
+                                <?php endforeach; ?>
                             </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -255,7 +329,9 @@ $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
             
             <div class="section">
-                <h2 class="section-title">DATOS MÉDICOS</h2>
+                <h2 class="section-title">
+                    <i class="fas fa-heartbeat"></i> DATOS MÉDICOS
+                </h2>
                 
                 <div class="detail-row">
                     <div class="detail-item">
@@ -302,8 +378,15 @@ $miembro = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
             
             <div class="btn-container">
-                <a href="list.php?token=<?php echo htmlspecialchars($_GET['token']); ?>" class="btn">Volver a la lista</a>
-                <a href="edit.php?id=<?php echo $id; ?>&token=<?php echo htmlspecialchars($_GET['token']); ?>" class="btn btn-edit">Editar</a>
+                <a href="list.php?token=<?php echo htmlspecialchars($_GET['token']); ?>" class="btn">
+                    <i class="fas fa-arrow-left"></i> Volver a la lista
+                </a>
+                <a href="edit.php?id=<?php echo $id; ?>&token=<?php echo htmlspecialchars($_GET['token']); ?>" class="btn btn-edit">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+                <a href="delete.php?id=<?php echo $id; ?>&token=<?php echo htmlspecialchars($_GET['token']); ?>" class="btn btn-delete" onclick="return confirm('¿Está seguro de que desea eliminar este registro?');">
+                    <i class="fas fa-trash"></i> Eliminar
+                </a>
             </div>
         </div>
     </div>
