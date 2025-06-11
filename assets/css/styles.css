@@ -5,12 +5,18 @@
 
 /* Variables de diseño */
 :root {
-  /* Paleta principal */
-  --primary-color: #1e3a8a;
-  --primary-light: #3b82f6;
-  --primary-dark: #0f172a;
-
-  /* Colores de estado */
+  /* Paleta masónica principal */
+  --primary-color: #8B0000;
+  --primary-light: #CD5C5C;
+  --primary-dark: #5D0000;
+  
+  /* Colores masónicos */
+  --masonic-gold: #FFD700;
+  --masonic-gold-light: #FFF8DC;
+  --masonic-gold-dark: #B8860B;
+  --masonic-cream: #FFF8E7;
+  
+  /* Colores de estado (mantener los existentes) */
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --danger-color: #ef4444;
